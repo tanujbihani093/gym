@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
 import Loader from './components/Loader';
 import CustomCursor from './components/CustomCursor';
 import ScrollProgress from './components/ScrollProgress';
@@ -13,9 +14,45 @@ import Pricing from './components/Pricing';
 import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
+import RegisterForm from './components/RegisterForm';
 import './App.css';
 
 function App() {
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(() => {
+    return localStorage.getItem('apex_registered') === 'true';
+  });
+  const [registeredName, setRegisteredName] = useState(() => {
+    return localStorage.getItem('apex_user_name') || '';
+  });
+
+  const openRegister = useCallback(() => {
+    setIsRegisterOpen(true);
+  }, []);
+
+  const closeRegister = useCallback(() => {
+    setIsRegisterOpen(false);
+  }, []);
+
+  const handleRegistrationComplete = useCallback((firstName) => {
+    setIsRegistered(true);
+    setRegisteredName(firstName);
+    localStorage.setItem('apex_registered', 'true');
+    localStorage.setItem('apex_user_name', firstName);
+  }, []);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isRegisterOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isRegisterOpen]);
+
   useEffect(() => {
     // Handle smooth scroll for anchor links
     const handleAnchorClick = (e) => {
@@ -106,17 +143,18 @@ function App() {
       <Loader />
       <CustomCursor />
       <ScrollProgress />
-      <Navbar />
+      <Navbar onOpenRegister={openRegister} isRegistered={isRegistered} registeredName={registeredName} />
+      <Hero onOpenRegister={openRegister} isRegistered={isRegistered} />
       <Marquee />
-      <Hero />
       <About />
       <Gallery />
       <Services />
       <Counter />
-      <Pricing />
+      <Pricing onOpenRegister={openRegister} isRegistered={isRegistered} />
       <Testimonials />
-      <CTA />
+      <CTA onOpenRegister={openRegister} isRegistered={isRegistered} />
       <Footer />
+      <RegisterForm isOpen={isRegisterOpen} onClose={closeRegister} onRegistrationComplete={handleRegistrationComplete} />
     </div>
   );
 }

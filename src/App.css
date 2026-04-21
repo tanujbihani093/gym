@@ -53,6 +53,8 @@ nav.scrolled { background:rgba(6,6,6,0.92); backdrop-filter:blur(16px); padding:
 /* Nav Buttons */
 .nb { background:transparent; border:1px solid rgba(232,34,46,0.5); color:var(--red); font-family:'Barlow Condensed',sans-serif; font-size:.85rem; letter-spacing:2px; text-transform:uppercase; padding:.55rem 1.6rem; border-radius:4px; transition:all .3s; }
 .nb:hover { background:var(--red); color:#fff; box-shadow:0 0 20px var(--glow); }
+.registered-badge { border-color:rgba(76,175,80,0.5); color:var(--white); cursor:default; font-size:.8rem; }
+.registered-badge:hover { background:rgba(76,175,80,0.1); border-color:rgba(76,175,80,0.7); color:var(--white); box-shadow:0 0 20px rgba(76,175,80,0.2); }
 
 /* Hamburger */
 .hbg { display:none; flex-direction:column; gap:5px; background:none; padding:4px; }

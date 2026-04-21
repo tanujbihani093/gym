@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useScroll } from '../hooks/useScroll';
 
-export default function Navbar() {
+export default function Navbar({ onOpenRegister, isRegistered, registeredName }) {
   const { isScrolled, currentSection } = useScroll();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -13,6 +13,12 @@ export default function Navbar() {
       window.scrollTo({ top, behavior: 'smooth' });
     }
     setMobileMenuOpen(false);
+  };
+
+  const handleJoinNow = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (onOpenRegister) onOpenRegister();
   };
 
   const navLinks = [
@@ -32,7 +38,7 @@ export default function Navbar() {
               <li key={link.id}>
                 <a
                   href={`#${link.id}`}
-                  onClick={() => scrollToSection(link.id)}
+                  onClick={(e) => { e.preventDefault(); scrollToSection(link.id); }}
                   style={{ color: currentSection === link.id ? 'var(--red)' : '' }}
                 >
                   {link.label}
@@ -40,7 +46,14 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <button className="nb" onClick={() => scrollToSection('pricing')}>Join Now</button>
+          {isRegistered ? (
+            <span className="nb registered-badge" id="welcome-badge">
+              <i className="fas fa-check-circle" style={{ marginRight: '0.4rem', color: '#4caf50' }}></i>
+              Welcome, {registeredName}
+            </span>
+          ) : (
+            <button className="nb" id="join-now-btn" onClick={handleJoinNow}>Join Now</button>
+          )}
           <button
             className="hbg"
             id="hbg-btn"
@@ -62,12 +75,19 @@ export default function Navbar() {
             key={link.id}
             href={`#${link.id}`}
             className="mlink"
-            onClick={() => scrollToSection(link.id)}
+            onClick={(e) => { e.preventDefault(); scrollToSection(link.id); }}
           >
             {link.label}
           </a>
         ))}
-        <a href="#pricing" className="br mlink" onClick={() => scrollToSection('pricing')}>Join Now</a>
+        {isRegistered ? (
+          <span className="br mlink registered-badge">
+            <i className="fas fa-check-circle" style={{ marginRight: '0.4rem' }}></i>
+            Registered
+          </span>
+        ) : (
+          <button className="br mlink" id="join-now-mobile-btn" onClick={handleJoinNow}>Join Now</button>
+        )}
       </div>
     </>
   );

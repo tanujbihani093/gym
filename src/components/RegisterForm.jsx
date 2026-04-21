@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import './RegisterForm.css';
 
-export default function RegisterForm({ isOpen, onClose }) {
+export default function RegisterForm({ isOpen, onClose, onRegistrationComplete }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -17,20 +17,20 @@ export default function RegisterForm({ isOpen, onClose }) {
     {
       id: 'starter',
       name: 'Starter',
-      price: 29,
+      price: 999,
       description: 'Perfect for beginners',
     },
     {
       id: 'pro',
       name: 'Pro',
-      price: 59,
+      price: 1999,
       description: 'For dedicated athletes',
       featured: true,
     },
     {
       id: 'elite',
       name: 'Elite',
-      price: 99,
+      price: 3499,
       description: 'The ultimate experience',
     },
   ];
@@ -52,7 +52,7 @@ export default function RegisterForm({ isOpen, onClose }) {
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
     } else if (!/^\d{10,}$/.test(formData.phone.replace(/\D/g, ''))) {
-      newErrors.phone = 'Please enter a valid phone number';
+      newErrors.phone = 'Please enter a valid 10-digit phone number';
     }
     if (!formData.selectedPlan) {
       newErrors.selectedPlan = 'Please select a subscription plan';
@@ -96,6 +96,11 @@ export default function RegisterForm({ isOpen, onClose }) {
       console.log('Form submitted:', formData);
       setIsSubmitted(true);
 
+      // Notify parent of registration completion
+      if (onRegistrationComplete) {
+        onRegistrationComplete(formData.firstName);
+      }
+
       setTimeout(() => {
         setIsSubmitted(false);
         setFormData({
@@ -106,13 +111,17 @@ export default function RegisterForm({ isOpen, onClose }) {
           selectedPlan: '',
         });
         onClose();
-      }, 2000);
+      }, 2500);
     }
   };
 
   if (!isOpen) return null;
 
   const selectedPlanData = plans.find((p) => p.id === formData.selectedPlan);
+
+  const formatPrice = (price) => {
+    return '₹' + price.toLocaleString('en-IN');
+  };
 
   return (
     <div className="register-modal-overlay" onClick={onClose}>
@@ -178,7 +187,7 @@ export default function RegisterForm({ isOpen, onClose }) {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 98765 43210"
                     className={errors.phone ? 'error' : ''}
                   />
                   {errors.phone && <span className="error-message">{errors.phone}</span>}
@@ -188,7 +197,7 @@ export default function RegisterForm({ isOpen, onClose }) {
                   type="submit"
                   className="register-submit-btn"
                 >
-                  <i className="fas fa-bolt"></i> Continue to Payment
+                  <i className="fas fa-bolt"></i> Complete Registration
                 </button>
               </form>
             ) : (
@@ -220,7 +229,7 @@ export default function RegisterForm({ isOpen, onClose }) {
                   <div className="plan-header">
                     <h4 className="plan-name">{plan.name}</h4>
                     <div className="plan-price">
-                      <span className="price-amount">${plan.price}</span>
+                      <span className="price-amount">{formatPrice(plan.price)}</span>
                       <span className="price-period">/month</span>
                     </div>
                   </div>
@@ -248,7 +257,7 @@ export default function RegisterForm({ isOpen, onClose }) {
                 </div>
                 <div className="summary-item">
                   <span>Monthly Cost:</span>
-                  <strong className="cost">${selectedPlanData.price}</strong>
+                  <strong className="cost">{formatPrice(selectedPlanData.price)}</strong>
                 </div>
               </div>
             )}

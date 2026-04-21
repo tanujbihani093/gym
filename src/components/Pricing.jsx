@@ -1,8 +1,8 @@
-export default function Pricing() {
+export default function Pricing({ onOpenRegister, isRegistered }) {
   const plans = [
     {
       name: 'Starter',
-      price: 29,
+      price: '₹999',
       description: 'Perfect for beginners looking to build a consistent fitness habit.',
       features: [
         { text: 'Access to gym floor', included: true },
@@ -19,7 +19,7 @@ export default function Pricing() {
     },
     {
       name: 'Pro',
-      price: 59,
+      price: '₹1,999',
       description: 'For dedicated athletes ready to take their training to the next level.',
       features: [
         { text: 'Full gym access 24/7', included: true },
@@ -36,7 +36,7 @@ export default function Pricing() {
     },
     {
       name: 'Elite',
-      price: 99,
+      price: '₹3,499',
       description: 'The ultimate experience. Everything included, no limits, no compromises.',
       features: [
         { text: 'Everything in Pro', included: true },
@@ -53,6 +53,11 @@ export default function Pricing() {
     },
   ];
 
+  const handlePlanClick = (e) => {
+    e.preventDefault();
+    if (onOpenRegister) onOpenRegister();
+  };
+
   return (
     <section id="pricing">
       <div className="ctn">
@@ -66,7 +71,7 @@ export default function Pricing() {
               <div className="plglow"></div>
               {plan.badge && <div className="plbadge">{plan.badge}</div>}
               <div className="pln">{plan.name}</div>
-              <div className="plp"><span className="pa">${plan.price}</span><span className="pm">/month</span></div>
+              <div className="plp"><span className="pa">{plan.price}</span><span className="pm">/month</span></div>
               <div className="pld">{plan.description}</div>
               <div className="pdiv"></div>
               <div className="plf">
@@ -76,7 +81,22 @@ export default function Pricing() {
                   </div>
                 ))}
               </div>
-              <button className={plan.buttonClass}>{plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}</button>
+              {isRegistered ? (
+                <span
+                  className={plan.buttonClass}
+                  style={{ cursor: 'default', opacity: 0.85 }}
+                >
+                  <i className="fas fa-check-circle"></i> Enrolled
+                </span>
+              ) : (
+                <button
+                  className={plan.buttonClass}
+                  id={`pricing-${plan.name.toLowerCase()}-btn`}
+                  onClick={handlePlanClick}
+                >
+                  {plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}
+                </button>
+              )}
             </div>
           ))}
         </div>
