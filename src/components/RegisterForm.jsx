@@ -106,8 +106,8 @@ export default function RegisterForm({ isOpen, onClose, onRegistrationComplete }
             Accept: 'application/json',
           },
           body: JSON.stringify({
-            // Placeholder: Replace with your actual Web3Forms Access Key
-            access_key: 'YOUR_ACCESS_KEY_HERE',
+            // Actual Web3Forms Access Key
+            access_key: '6ebc5cc6-299f-41dd-adad-315e3949457c',
             subject: 'New Registration on APEX GYM',
             from_name: 'APEX GYM Website',
             firstName: formData.firstName,
