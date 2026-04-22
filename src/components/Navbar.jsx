@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useScroll } from '../hooks/useScroll';
 
-export default function Navbar({ onOpenRegister, isRegistered, registeredName }) {
+export default function Navbar({ onOpenRegister, onOpenLogin, isLoggedIn, loggedInUser, onLogout }) {
   const { isScrolled, currentSection } = useScroll();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,13 +46,19 @@ export default function Navbar({ onOpenRegister, isRegistered, registeredName })
               </li>
             ))}
           </ul>
-          {isRegistered ? (
-            <span className="nb registered-badge" id="welcome-badge">
-              <i className="fas fa-check-circle" style={{ marginRight: '0.4rem', color: '#4caf50' }}></i>
-              Welcome, {registeredName}
-            </span>
+          {isLoggedIn ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className="nb registered-badge" id="welcome-badge">
+                <i className="fas fa-user-circle" style={{ marginRight: '0.4rem', color: '#4caf50' }}></i>
+                {loggedInUser}
+              </span>
+              <button className="nb" onClick={onLogout} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)' }}>Logout</button>
+            </div>
           ) : (
-            <button className="nb" id="join-now-btn" onClick={handleJoinNow}>Join Now</button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button className="nb" onClick={(e) => { e.preventDefault(); if(onOpenLogin) onOpenLogin(); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)' }}>Login</button>
+              <button className="nb" id="join-now-btn" onClick={handleJoinNow}>Join Now</button>
+            </div>
           )}
           <button
             className="hbg"
@@ -80,13 +86,19 @@ export default function Navbar({ onOpenRegister, isRegistered, registeredName })
             {link.label}
           </a>
         ))}
-        {isRegistered ? (
-          <span className="br mlink registered-badge">
-            <i className="fas fa-check-circle" style={{ marginRight: '0.4rem' }}></i>
-            Registered
-          </span>
+        {isLoggedIn ? (
+          <>
+            <span className="br mlink registered-badge" style={{ marginTop: '1rem' }}>
+              <i className="fas fa-user-circle" style={{ marginRight: '0.4rem' }}></i>
+              {loggedInUser}
+            </span>
+            <button className="br mlink" onClick={() => { onLogout(); setMobileMenuOpen(false); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', marginTop: '0.5rem' }}>Logout</button>
+          </>
         ) : (
-          <button className="br mlink" id="join-now-mobile-btn" onClick={handleJoinNow}>Join Now</button>
+          <>
+            <button className="br mlink" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); if(onOpenLogin) onOpenLogin(); }} style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', marginTop: '1rem' }}>Login</button>
+            <button className="br mlink" id="join-now-mobile-btn" onClick={handleJoinNow} style={{ marginTop: '0.5rem' }}>Join Now</button>
+          </>
         )}
       </div>
     </>

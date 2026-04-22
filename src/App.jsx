@@ -15,16 +15,25 @@ import Testimonials from './components/Testimonials';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
 import RegisterForm from './components/RegisterForm';
+import LoginForm from './components/LoginForm';
 import './App.css';
 
 function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(() => {
-    return localStorage.getItem('apex_registered') === 'true';
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return sessionStorage.getItem('apex_logged_in') === 'true';
   });
-  const [registeredName, setRegisteredName] = useState(() => {
-    return localStorage.getItem('apex_user_name') || '';
+  const [loggedInUser, setLoggedInUser] = useState(() => {
+    return sessionStorage.getItem('apex_user') || '';
   });
+
+  // Clear old persistent registration data
+  useEffect(() => {
+    localStorage.removeItem('apex_registered');
+    localStorage.removeItem('apex_user_name');
+  }, []);
 
   const openRegister = useCallback(() => {
     setIsRegisterOpen(true);
@@ -34,16 +43,35 @@ function App() {
     setIsRegisterOpen(false);
   }, []);
 
+  const openLogin = useCallback(() => {
+    setIsLoginOpen(true);
+  }, []);
+
+  const closeLogin = useCallback(() => {
+    setIsLoginOpen(false);
+  }, []);
+
   const handleRegistrationComplete = useCallback((firstName) => {
-    setIsRegistered(true);
-    setRegisteredName(firstName);
-    localStorage.setItem('apex_registered', 'true');
-    localStorage.setItem('apex_user_name', firstName);
+    // Just close the registration form, it doesn't auto-login or lock the site permanently anymore
+  }, []);
+
+  const handleLogin = useCallback((userName) => {
+    setIsLoggedIn(true);
+    setLoggedInUser(userName);
+    sessionStorage.setItem('apex_logged_in', 'true');
+    sessionStorage.setItem('apex_user', userName);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setIsLoggedIn(false);
+    setLoggedInUser('');
+    sessionStorage.removeItem('apex_logged_in');
+    sessionStorage.removeItem('apex_user');
   }, []);
 
   // Lock body scroll when modal is open
   useEffect(() => {
-    if (isRegisterOpen) {
+    if (isRegisterOpen || isLoginOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -51,7 +79,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isRegisterOpen]);
+  }, [isRegisterOpen, isLoginOpen]);
 
   useEffect(() => {
     // Handle smooth scroll for anchor links
@@ -143,18 +171,25 @@ function App() {
       <Loader />
       <CustomCursor />
       <ScrollProgress />
-      <Navbar onOpenRegister={openRegister} isRegistered={isRegistered} registeredName={registeredName} />
-      <Hero onOpenRegister={openRegister} isRegistered={isRegistered} />
+      <Navbar 
+        onOpenRegister={openRegister} 
+        onOpenLogin={openLogin}
+        isLoggedIn={isLoggedIn} 
+        loggedInUser={loggedInUser} 
+        onLogout={handleLogout}
+      />
+      <Hero onOpenRegister={openRegister} />
       <Marquee />
       <About />
       <Gallery />
       <Services />
       <Counter />
-      <Pricing onOpenRegister={openRegister} isRegistered={isRegistered} />
+      <Pricing onOpenRegister={openRegister} />
       <Testimonials />
-      <CTA onOpenRegister={openRegister} isRegistered={isRegistered} />
+      <CTA onOpenRegister={openRegister} />
       <Footer />
       <RegisterForm isOpen={isRegisterOpen} onClose={closeRegister} onRegistrationComplete={handleRegistrationComplete} />
+      <LoginForm isOpen={isLoginOpen} onClose={closeLogin} onLogin={handleLogin} />
     </div>
   );
 }

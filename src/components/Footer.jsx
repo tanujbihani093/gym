@@ -35,9 +35,9 @@ export default function Footer() {
         <div className="fcol">
           <h4>Contact</h4>
           <ul>
-            <li><a href="mailto:info@apexgym.com">info@apexgym.com</a></li>
-            <li><a href="tel:+15551234567">+1 (555) 123-4567</a></li>
-            <li><a href="#">123 Iron Street</a></li>
+            <li><a href="#">Tanuj Bihani</a></li>
+            <li><a href="mailto:tanujbihani093@gmail.com">tanujbihani093@gmail.com</a></li>
+            <li><a href="https://wa.me/918824895049" target="_blank" rel="noreferrer">WhatsApp: 8824895049</a></li>
             <li><a href="#">Mon-Sun: 24/7</a></li>
           </ul>
         </div>

@@ -1,4 +1,4 @@
-export default function Pricing({ onOpenRegister, isRegistered }) {
+export default function Pricing({ onOpenRegister }) {
   const plans = [
     {
       name: 'Starter',
@@ -81,22 +81,13 @@ export default function Pricing({ onOpenRegister, isRegistered }) {
                   </div>
                 ))}
               </div>
-              {isRegistered ? (
-                <span
-                  className={plan.buttonClass}
-                  style={{ cursor: 'default', opacity: 0.85 }}
-                >
-                  <i className="fas fa-check-circle"></i> Enrolled
-                </span>
-              ) : (
-                <button
-                  className={plan.buttonClass}
-                  id={`pricing-${plan.name.toLowerCase()}-btn`}
-                  onClick={handlePlanClick}
-                >
-                  {plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}
-                </button>
-              )}
+              <button
+                className={plan.buttonClass}
+                id={`pricing-${plan.name.toLowerCase()}-btn`}
+                onClick={handlePlanClick}
+              >
+                {plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}
+              </button>
             </div>
           ))}
         </div>

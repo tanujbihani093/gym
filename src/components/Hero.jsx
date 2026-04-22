@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useParticles } from '../hooks/useParticles';
 
-export default function Hero({ onOpenRegister, isRegistered }) {
+export default function Hero({ onOpenRegister }) {
   const heroRef = useRef(null);
   const hconRef = useRef(null);
   const hbg2Ref = useRef(null);
@@ -48,15 +48,9 @@ export default function Hero({ onOpenRegister, isRegistered }) {
         </h1>
         <p className="hd">Where iron meets ambition. Train with elite coaches, world-class facilities, and a community that pushes you beyond every limit you thought you had.</p>
         <div className="ha">
-          {isRegistered ? (
-            <span className="br" style={{ cursor: 'default', opacity: 0.9 }}>
-              <i className="fas fa-check-circle"></i> You're All Set!
-            </span>
-          ) : (
-            <button className="br" id="hero-start-btn" onClick={handleStartToday}>
-              <i className="fas fa-bolt"></i> Start Today
-            </button>
-          )}
+          <button className="br" id="hero-start-btn" onClick={handleStartToday}>
+            <i className="fas fa-bolt"></i> Start Today
+          </button>
           <a href="#services" className="bg">Explore Services <i className="fas fa-arrow-right"></i></a>
         </div>
         <div className="hst">
