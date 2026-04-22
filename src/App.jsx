@@ -28,6 +28,9 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState(() => {
     return sessionStorage.getItem('apex_user') || '';
   });
+  const [loggedInUserPlan, setLoggedInUserPlan] = useState(() => {
+    return sessionStorage.getItem('apex_user_plan') || '';
+  });
 
   // Clear old persistent registration data
   useEffect(() => {
@@ -51,22 +54,34 @@ function App() {
     setIsLoginOpen(false);
   }, []);
 
-  const handleRegistrationComplete = useCallback((firstName) => {
-    // Just close the registration form, it doesn't auto-login or lock the site permanently anymore
+  const handleRegistrationComplete = useCallback((firstName, selectedPlan) => {
+    // Auto-login the user after successful registration
+    setIsLoggedIn(true);
+    setLoggedInUser(firstName);
+    setLoggedInUserPlan(selectedPlan);
+    sessionStorage.setItem('apex_logged_in', 'true');
+    sessionStorage.setItem('apex_user', firstName);
+    sessionStorage.setItem('apex_user_plan', selectedPlan);
   }, []);
 
   const handleLogin = useCallback((userName) => {
     setIsLoggedIn(true);
     setLoggedInUser(userName);
+    // Mocking the plan for manual login to 'pro' if not provided
+    const plan = 'pro';
+    setLoggedInUserPlan(plan);
     sessionStorage.setItem('apex_logged_in', 'true');
     sessionStorage.setItem('apex_user', userName);
+    sessionStorage.setItem('apex_user_plan', plan);
   }, []);
 
   const handleLogout = useCallback(() => {
     setIsLoggedIn(false);
     setLoggedInUser('');
+    setLoggedInUserPlan('');
     sessionStorage.removeItem('apex_logged_in');
     sessionStorage.removeItem('apex_user');
+    sessionStorage.removeItem('apex_user_plan');
   }, []);
 
   // Lock body scroll when modal is open
@@ -184,7 +199,7 @@ function App() {
       <Gallery />
       <Services />
       <Counter />
-      <Pricing onOpenRegister={openRegister} />
+      <Pricing onOpenRegister={openRegister} isLoggedIn={isLoggedIn} loggedInUserPlan={loggedInUserPlan} />
       <Testimonials />
       <CTA onOpenRegister={openRegister} />
       <Footer />

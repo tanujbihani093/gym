@@ -1,6 +1,7 @@
-export default function Pricing({ onOpenRegister }) {
+export default function Pricing({ onOpenRegister, isLoggedIn, loggedInUserPlan }) {
   const plans = [
     {
+      id: 'starter',
       name: 'Starter',
       price: '₹999',
       description: 'Perfect for beginners looking to build a consistent fitness habit.',
@@ -18,6 +19,7 @@ export default function Pricing({ onOpenRegister }) {
       featured: false,
     },
     {
+      id: 'pro',
       name: 'Pro',
       price: '₹1,999',
       description: 'For dedicated athletes ready to take their training to the next level.',
@@ -35,6 +37,7 @@ export default function Pricing({ onOpenRegister }) {
       featured: true,
     },
     {
+      id: 'elite',
       name: 'Elite',
       price: '₹3,499',
       description: 'The ultimate experience. Everything included, no limits, no compromises.',
@@ -66,30 +69,53 @@ export default function Pricing({ onOpenRegister }) {
           <h2 className="st2">INVEST IN<br /><em>YOURSELF.</em></h2>
         </div>
         <div className="pg">
-          {plans.map((plan, idx) => (
-            <div key={idx} className={`pl rx ${plan.featured ? 'ft' : ''}`}>
+          {plans.map((plan, idx) => {
+            const isUserPlan = isLoggedIn && loggedInUserPlan === plan.id;
+            const isOtherPlan = isLoggedIn && loggedInUserPlan !== plan.id && loggedInUserPlan !== '';
+
+            return (
+            <div key={idx} className={`pl rx ${plan.featured ? 'ft' : ''}`} style={isOtherPlan ? { opacity: 0.7, transform: 'scale(0.95)' } : {}}>
               <div className="plglow"></div>
-              {plan.badge && <div className="plbadge">{plan.badge}</div>}
+              {plan.badge && !isOtherPlan && <div className="plbadge">{plan.badge}</div>}
+              {isUserPlan && <div className="plbadge" style={{ background: '#4caf50', color: 'white' }}>Your Plan</div>}
               <div className="pln">{plan.name}</div>
-              <div className="plp"><span className="pa">{plan.price}</span><span className="pm">/month</span></div>
-              <div className="pld">{plan.description}</div>
-              <div className="pdiv"></div>
-              <div className="plf">
-                {plan.features.map((feature, fidx) => (
-                  <div key={fidx} className={`pf2 ${!feature.included ? 'no' : ''}`}>
-                    <i className={`fas ${feature.included ? 'fa-check' : 'fa-xmark'}`}></i> {feature.text}
+              
+              {!isOtherPlan ? (
+                <>
+                  <div className="plp"><span className="pa">{plan.price}</span><span className="pm">/month</span></div>
+                  <div className="pld">{plan.description}</div>
+                  <div className="pdiv"></div>
+                  <div className="plf">
+                    {plan.features.map((feature, fidx) => (
+                      <div key={fidx} className={`pf2 ${!feature.included ? 'no' : ''}`}>
+                        <i className={`fas ${feature.included ? 'fa-check' : 'fa-xmark'}`}></i> {feature.text}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-              <button
-                className={plan.buttonClass}
-                id={`pricing-${plan.name.toLowerCase()}-btn`}
-                onClick={handlePlanClick}
-              >
-                {plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}
-              </button>
+                  {isUserPlan ? (
+                    <span className={plan.buttonClass} style={{ cursor: 'default', opacity: 0.85, marginTop: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                      <i className="fas fa-check-circle"></i> Active Plan
+                    </span>
+                  ) : (
+                    <button
+                      className={plan.buttonClass}
+                      id={`pricing-${plan.name.toLowerCase()}-btn`}
+                      onClick={handlePlanClick}
+                    >
+                      {plan.buttonText} {plan.buttonClass === 'br' ? <i className="fas fa-bolt"></i> : <i className="fas fa-arrow-right"></i>}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', flex: 1, justifyContent: 'center' }}>
+                  <p style={{ color: 'var(--text-light)', textAlign: 'center', fontStyle: 'italic' }}>Want more features?</p>
+                  <button className="bg" style={{ marginTop: 'auto', width: '100%' }}>
+                    More Offers <i className="fas fa-arrow-right"></i>
+                  </button>
+                </div>
+              )}
             </div>
-          ))}
+          )})}
         </div>
       </div>
     </section>

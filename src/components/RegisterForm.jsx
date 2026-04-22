@@ -11,7 +11,9 @@ export default function RegisterForm({ isOpen, onClose, onRegistrationComplete }
   });
 
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const plans = [
     {
@@ -89,29 +91,63 @@ export default function RegisterForm({ isOpen, onClose, onRegistrationComplete }
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError('');
 
     if (validateForm()) {
-      console.log('Form submitted:', formData);
-      setIsSubmitted(true);
+      setIsSubmitting(true);
 
-      // Notify parent of registration completion
-      if (onRegistrationComplete) {
-        onRegistrationComplete(formData.firstName);
-      }
-
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          selectedPlan: '',
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({
+            // Placeholder: Replace with your actual Web3Forms Access Key
+            access_key: 'YOUR_ACCESS_KEY_HERE',
+            subject: 'New Registration on APEX GYM',
+            from_name: 'APEX GYM Website',
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            selectedPlan: formData.selectedPlan,
+          }),
         });
-        onClose();
-      }, 2500);
+
+        const result = await response.json();
+
+        if (response.status === 200) {
+          setIsSubmitted(true);
+
+          // Notify parent of registration completion with name and plan
+          if (onRegistrationComplete) {
+            onRegistrationComplete(formData.firstName, formData.selectedPlan);
+          }
+
+          setTimeout(() => {
+            setIsSubmitted(false);
+            setFormData({
+              firstName: '',
+              lastName: '',
+              email: '',
+              phone: '',
+              selectedPlan: '',
+            });
+            onClose();
+          }, 2500);
+        } else {
+          // Handle API errors
+          setSubmitError(result.message || 'Something went wrong. Please try again later.');
+        }
+      } catch (error) {
+        setSubmitError('Failed to submit form. Please check your internet connection.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -193,11 +229,26 @@ export default function RegisterForm({ isOpen, onClose, onRegistrationComplete }
                   {errors.phone && <span className="error-message">{errors.phone}</span>}
                 </div>
 
+                {submitError && (
+                  <div className="form-group">
+                    <span className="error-message" style={{ display: 'block', padding: '0.5rem', background: 'rgba(255,0,0,0.1)', border: '1px solid #ff3333', borderRadius: '4px' }}>
+                      <i className="fas fa-exclamation-triangle" style={{ marginRight: '0.5rem' }}></i>
+                      {submitError}
+                    </span>
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   className="register-submit-btn"
+                  disabled={isSubmitting}
+                  style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                 >
-                  <i className="fas fa-bolt"></i> Complete Registration
+                  {isSubmitting ? (
+                    <><i className="fas fa-spinner fa-spin"></i> Processing...</>
+                  ) : (
+                    <><i className="fas fa-bolt"></i> Complete Registration</>
+                  )}
                 </button>
               </form>
             ) : (
